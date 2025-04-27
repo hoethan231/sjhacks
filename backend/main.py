@@ -4,7 +4,7 @@ from routes import emergency, search
 
 app = FastAPI()
 
-app.include_router(emergency.router, prefix="/routes/emergency")
+app.include_router(emergency.router)
 # app.include_router(search.router, prefix="/routes/search")
 
 if __name__ == "__main__":
