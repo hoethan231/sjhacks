@@ -115,7 +115,6 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               <span>Hospital Capacity</span>
             </Link>
 
-            
           </nav>
         </div>
 

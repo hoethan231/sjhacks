@@ -1,6 +1,8 @@
 import { MapPin, Users, Clock, AlertTriangle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import { useDispatchStore } from "@/lib/dispatch-store"
+
 
 
 const responderRequirements: Record<string, { Fire?: number; Medical?: number; Police?: number; Clinician?: number; Outreach?: number; CityServices?: number }> = {
@@ -100,9 +102,23 @@ export function EmergencySummary({ emergency }: EmergencySummaryProps) {
           >
             Call History
           </Link>
-          <button className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300">
+          
+          <button
+            className="text-sm text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+            onClick={() => {
+              if (!emergency) return;
+              const newDetails = prompt('Edit emergency details:', emergency.description)
+              if (newDetails && newDetails.trim().length > 0) {
+                useDispatchStore.getState().updateEmergencyDescription(emergency.id, newDetails.trim())
+                // For demo: mutate object locally
+                emergency.description = newDetails.trim()
+              }
+            }}
+          >
             Update Status
           </button>
+
+           
         </div>
       </div>
     </div>

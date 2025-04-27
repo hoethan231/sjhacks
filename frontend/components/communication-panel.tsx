@@ -2,6 +2,9 @@
 
 import { useState } from "react"
 import { MessageSquare, Send } from "lucide-react"
+import { useDispatchStore } from "@/lib/dispatch-store"
+import { hospitals } from "@/components/hospital-data"
+
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 
@@ -22,7 +25,17 @@ interface CommunicationPanelProps {
 }
 
 export function CommunicationPanel({ emergency }: CommunicationPanelProps) {
-  const [message, setMessage] = useState("")
+  
+  const hospitalMap = useDispatchStore(state => state.emergencyHospitalMap)
+  const selectedHospitalId = hospitalMap[emergency?.id ?? ""] || null
+  const selectedHospital = hospitals.find(h => h.id === selectedHospitalId)
+
+  const defaultMessage = emergency
+    ? `[To: ${emergency.responders.join(", ")}] ${emergency.description}${selectedHospital ? " – Proceed to " + selectedHospital.name : ""}`
+    : ""
+
+  const [message, setMessage] = useState(defaultMessage)
+
 
   // Sample messages - in a real app, these would come from an API
   const [messages, setMessages] = useState([
@@ -79,7 +92,17 @@ export function CommunicationPanel({ emergency }: CommunicationPanelProps) {
       </div>
 
       <div className="p-4 border-t">
-        <div className="relative">
+        
+        <div className="mb-2 text-sm text-muted-foreground">
+          <strong>To:</strong> {emergency?.responders.join(", ")}
+          {selectedHospital && (
+            <>
+              {" • "}Proceed to <strong>{selectedHospital.name}</strong>
+            </>
+          )}
+        </div>
+
+          <div className="relative">
           <Textarea
             placeholder="Send an update to responders..."
             className="min-h-[80px] pr-12"
