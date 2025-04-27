@@ -1,6 +1,13 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from models import EmergencyCreate, EmergencyOut
 from db import emergency_tb
+# from db import emergencies_collection
+from hume.empathic_voice.types import (
+    WebhookEvent,
+    WebhookEventChatStarted,
+    WebhookEventChatEnded
+)
+from hume_utilities import validate_headers, get_chat_transcript
 from bson import ObjectId
 
 emergency_router = APIRouter(prefix="/emergencies", tags=["emergencies"])
@@ -31,3 +38,25 @@ async def delete_emergency(id: str):
         raise HTTPException(status_code=404, detail="Emergency not found")
     return {"status": "deleted"}
 
+# For hume
+@router.post("/hume-webhook")
+async def hume_webhook_handler(request: Request, event: WebhookEvent):
+    # Get raw body
+    raw_payload = await request.body()
+    payload_str = raw_payload.decode("utf-8")
+
+    try:
+        validate_headers(payload_str, request.headers)
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail=str(e))
+
+    # Handle different event types
+    if isinstance(event, WebhookEventChatStarted):
+        print(f"✅ Chat started: {event.dict()}")
+
+    elif isinstance(event, WebhookEventChatEnded):
+        print(f"✅ Chat ended: {event.dict()}")
+        transcript = await get_chat_transcript(event.chat_id)
+        # todo save ^ in db
+
+    return JSONResponse({"message": "Webhook received successfully"})

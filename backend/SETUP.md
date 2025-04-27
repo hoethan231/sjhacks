@@ -11,5 +11,9 @@ pip install -r requirements.txt
 Create a `.env` file within the `/backend` folder. Then write your username and password as indicated: 
 
 ```
-MONGO_URI = mongodb+srv://YOURUSER:YOURPASS@db.xtn5b1o.mongodb.net/?retryWrites=true&w=majority&appName=db
+MONGO_URI = mongodb+srv://`YOURUSER`:`YOURPASS`@db.xtn5b1o.mongodb.net/?retryWrites=true&w=majority&appName=db
+HUME_API_KEY = `YOURAPI`
+HUME_SECRET = `YOURSECRET`
+HUME_CONFIG_ID = `YOUR_ID`
+WEBHOOK_URL = `YOURWEBHOOKURL`
 ```
