@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, Request
 from models import EmergencyCreate, EmergencyOut
 from db import emergency_tb
-# from db import emergencies_collection
+
 from hume.empathic_voice.types import (
     WebhookEvent,
     WebhookEventChatStarted,
