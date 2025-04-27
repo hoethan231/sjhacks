@@ -10,6 +10,5 @@ conda env create -f environment.yml
 Create a `.env` file within the `/backend` folder. Then write your username and password as indicated: 
 
 ```
-MONGODB_USERNAME=hari
-MONGODB_PASSWORD=123
+MONGO_URI = mongodb+srv://YOURUSER:YOURPASS@db.xtn5b1o.mongodb.net/?retryWrites=true&w=majority&appName=db
 ```
