@@ -1,8 +1,9 @@
 "use client"
 
-import { X, LifeBuoy, Phone, Users, Clock, LogOut, Map } from "lucide-react"
+import { X, Phone, Users, Clock, LogOut, Map } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { ThemeToggle } from "@/components/theme-toggle"
 
@@ -24,7 +25,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
       <div className="relative flex h-full flex-col overflow-y-auto border-r bg-midnight-500 dark:bg-slate-800 pb-4 text-white">
         <div className="flex items-center justify-between px-4 py-3 border-b border-midnight-400 dark:border-slate-700">
           <Link href="/" className="flex items-center">
-            <LifeBuoy className="h-6 w-6 text-red-600" />
+            <Image src="/seal.png" alt="RERS Seal" width={24} height={24} className="h-6 w-6" />
             <span className="ml-2 text-lg font-semibold">RERS</span>
           </Link>
           <Button
