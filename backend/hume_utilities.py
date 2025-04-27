@@ -3,69 +3,56 @@ import aiohttp
 import hmac
 import hashlib
 from dotenv import load_dotenv
-from hume import HumeClient
-from hume.empathic_voice import PostedConfigPromptSpec, PostedWebhookSpec, PostedVoice, PostedLanguageModel
 from prompts import responder
+from hume import HumeClient
+from hume.empathic_voice import (
+    PostedConfigPromptSpec, 
+    PostedWebhookSpec, 
+    PostedVoice, 
+    PostedEventMessageSpecs, 
+    PostedEventMessageSpec)
 
 load_dotenv()
 HUME_API_KEY = os.getenv("HUME_API_KEY")
 HUME_SECRET = os.getenv("HUME_SECRET")
-HUME_CONFIG_ID = os.getenv("HUME_CONFIG_ID")
 WEBHOOK_URL = os.getenv("WEBHOOK_URL")
-PROMPT_ID = os.getenv("PROMPT_ID")
 
-# def config_client() -> None:
-#     client = HumeClient(api_key=HUME_API_KEY)
+def config_client() -> None:
+    client = HumeClient(api_key=HUME_API_KEY)
 
-#     config = client.empathic_voice.configs.create_config(
-#     name="Emergency Dispatcher Config",
-#     evi_version="2",
-#     prompt=PostedConfigPromptSpec(
-#         text=responder,
-#     ),
-#     voice=PostedVoice(
-#         provider="HUME_AI",
-#         name="KORA",
-#     ),
-#     language_model=PostedLanguageModel(
-#         model_provider="HUME",
-#         model_resource="hume-evi-2",
-#     ),
-#     event_messages=PostedEventMessageSpecs(
-#         on_new_chat=PostedEventMessageSpec(
-#             enabled=True,
-#             text="Hello, what is your emergency?",
-#         ),
-#         on_inactivity_timeout=PostedEventMessageSpec(
-#             enabled=True,
-#             text="",
-#         ),
-#         on_max_duration_timeout=PostedEventMessageSpec(
-#             enabled=True,
-#             text="",
-#         ),
-#     ),
-#     tools=[
-#         PostedTool(name="web-search"),
-#         PostedTool(name="hang-up"),
-#     ],
-#     timeouts=PostedTimeoutSpecs(
-#         inactivity=PostedTimeoutSpec(
-#             enabled=True,
-#             duration_secs=120,
-#         ),
-#         max_duration=PostedTimeoutSpec(
-#             enabled=True,
-#             duration_secs=1800,
-#         ),
-#     ),
-#     webhooks=[
-#         PostedWebhookSpec(
-#             url=WEBHOOK_URL,
-#             events=["chat_started", "chat_ended"],
-#         )
-#     ],
-# )
+    config = client.empathic_voice.configs.create_config(
+        name="Emergency Dispatcher Config 5",
+        evi_version="2",
+        prompt=PostedConfigPromptSpec(
+            text=responder,
+        ),
+        voice=PostedVoice(
+            provider="HUME_AI",
+            name="KORA",
+        ),
+        event_messages=PostedEventMessageSpecs(
+            on_new_chat=PostedEventMessageSpec(
+                enabled=True,
+                text="Hello, what is your emergency?",
+            ),
+            on_inactivity_timeout=PostedEventMessageSpec(
+                enabled=True,
+                text="",
+            ),
+            on_max_duration_timeout=PostedEventMessageSpec(
+                enabled=True,
+                text="",
+            ),
+        ),
+        webhooks=[
+            PostedWebhookSpec(
+                url="https://09e0-50-217-174-18.ngrok-free.app/hume-webhook",
+                events=["chat_started", "chat_ended"],
+            )
+        ],
+    )
+
+    print("Created config!")
 
 def validate_headers(payload: str, headers) -> None:
     """
