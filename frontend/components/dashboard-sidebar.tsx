@@ -46,7 +46,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               }`}
             >
               <Phone className="mr-3 h-5 w-5" />
-              <span>Incoming Calls</span>
+              <span>Current Emergencies</span>
             </Link>
             <Link
               href="/emergency-map"
