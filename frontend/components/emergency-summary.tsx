@@ -1,5 +1,6 @@
-import { MapPin, Users, Clock, AlertTriangle, Phone } from "lucide-react"
+import { MapPin, Users, Clock, AlertTriangle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import Link from "next/link"
 
 interface Emergency {
   id: string
@@ -11,6 +12,7 @@ interface Emergency {
   callerPhone: string
   description: string
   responders: string[]
+  recommendedResponders?: number
 }
 
 interface EmergencySummaryProps {
@@ -51,15 +53,6 @@ export function EmergencySummary({ emergency }: EmergencySummaryProps) {
           </div>
 
           <div>
-            <h3 className="text-sm font-medium text-gray-500">Caller Information</h3>
-            <p className="mt-1">{emergency.callerName}</p>
-            <p className="flex items-center mt-1">
-              <Phone className="h-4 w-4 text-gray-500 mr-1" />
-              {emergency.callerPhone}
-            </p>
-          </div>
-
-          <div>
             <h3 className="text-sm font-medium text-gray-500">Time Reported</h3>
             <p className="flex items-center mt-1">
               <Clock className="h-4 w-4 text-gray-500 mr-1" />
@@ -86,13 +79,18 @@ export function EmergencySummary({ emergency }: EmergencySummaryProps) {
                 ))}
               </div>
             </div>
+            <p className="text-xs mt-2 text-gray-500">
+              {emergency.responders.length}/{emergency.recommendedResponders || 3} recommended responders assigned
+            </p>
           </div>
         </div>
       </div>
 
       <div className="p-4 border-t bg-gray-50">
         <div className="flex justify-between">
-          <button className="text-sm text-blue-600 hover:text-blue-800">View Full Details</button>
+          <Link href="/call-history" className="text-sm text-blue-600 hover:text-blue-800">
+            Call History
+          </Link>
           <button className="text-sm text-blue-600 hover:text-blue-800">Update Status</button>
         </div>
       </div>

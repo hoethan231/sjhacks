@@ -8,46 +8,52 @@ import { IncomingCallsList } from "@/components/incoming-calls-list"
 import { EmergencySummary } from "@/components/emergency-summary"
 import { CommunicationPanel } from "@/components/communication-panel"
 
+// Sample data - in a real app, this would come from an API
+export const emergencies = [
+  {
+    id: "em-1",
+    type: "Fire",
+    location: "123 Main St, San Jose",
+    status: "Critical",
+    time: "2 mins ago",
+    callerName: "John Smith",
+    callerPhone: "555-123-4567",
+    description: "Kitchen fire spreading to living room. Three occupants evacuated, one possibly still inside.",
+    responders: ["Engine 12", "Ladder 5", "Ambulance 3"],
+    recommendedResponders: 5,
+    coordinates: { lat: 37.335, lng: -121.893 },
+  },
+  {
+    id: "em-2",
+    type: "Medical",
+    location: "45 Park Ave, San Jose",
+    status: "Urgent",
+    time: "5 mins ago",
+    callerName: "Mary Johnson",
+    callerPhone: "555-987-6543",
+    description: "Elderly male, 78, experiencing chest pain and difficulty breathing.",
+    responders: ["Ambulance 7", "Paramedic 2"],
+    recommendedResponders: 3,
+    coordinates: { lat: 37.329, lng: -121.885 },
+  },
+  {
+    id: "em-3",
+    type: "Traffic Accident",
+    location: "Highway 101, San Jose",
+    status: "Active",
+    time: "12 mins ago",
+    callerName: "Highway Patrol",
+    callerPhone: "555-789-0123",
+    description: "Multi-vehicle collision, at least 3 vehicles involved. Possible injuries reported.",
+    responders: ["Engine 8", "Ambulance 4", "Police Unit 15"],
+    recommendedResponders: 6,
+    coordinates: { lat: 37.345, lng: -121.915 },
+  },
+]
+
 export function EmergencyDashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedEmergency, setSelectedEmergency] = useState<string | null>(null)
-
-  // Sample data - in a real app, this would come from an API
-  const emergencies = [
-    {
-      id: "em-1",
-      type: "Fire",
-      location: "123 Main St, Apartment 4B",
-      status: "Critical",
-      time: "2 mins ago",
-      callerName: "John Smith",
-      callerPhone: "555-123-4567",
-      description: "Kitchen fire spreading to living room. Three occupants evacuated, one possibly still inside.",
-      responders: ["Engine 12", "Ladder 5", "Ambulance 3"],
-    },
-    {
-      id: "em-2",
-      type: "Medical",
-      location: "45 Park Ave",
-      status: "Urgent",
-      time: "5 mins ago",
-      callerName: "Mary Johnson",
-      callerPhone: "555-987-6543",
-      description: "Elderly male, 78, experiencing chest pain and difficulty breathing.",
-      responders: ["Ambulance 7", "Paramedic 2"],
-    },
-    {
-      id: "em-3",
-      type: "Traffic Accident",
-      location: "Highway 101, Mile Marker 23",
-      status: "Active",
-      time: "12 mins ago",
-      callerName: "Highway Patrol",
-      callerPhone: "555-789-0123",
-      description: "Multi-vehicle collision, at least 3 vehicles involved. Possible injuries reported.",
-      responders: ["Engine 8", "Ambulance 4", "Police Unit 15"],
-    },
-  ]
 
   // Find the selected emergency details
   const selectedEmergencyDetails = selectedEmergency

@@ -1,5 +1,8 @@
 "use client"
 
+import type React from "react"
+
+import { useRouter } from "next/navigation"
 import { Phone, AlertCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -14,6 +17,7 @@ interface Emergency {
   callerPhone: string
   description: string
   responders: string[]
+  recommendedResponders?: number
 }
 
 interface IncomingCallsListProps {
@@ -23,6 +27,14 @@ interface IncomingCallsListProps {
 }
 
 export function IncomingCallsList({ emergencies, selectedEmergency, setSelectedEmergency }: IncomingCallsListProps) {
+  const router = useRouter()
+
+  const handleDispatch = (emergencyId: string, e: React.MouseEvent) => {
+    e.stopPropagation()
+    // Navigate to responder teams page with the emergency ID
+    router.push(`/responder-teams?emergency=${emergencyId}`)
+  }
+
   return (
     <div className="space-y-3">
       {emergencies.map((emergency) => (
@@ -67,21 +79,16 @@ export function IncomingCallsList({ emergencies, selectedEmergency, setSelectedE
               className="text-xs"
               onClick={(e) => {
                 e.stopPropagation()
-                // In a real app, this would open a modal or navigate to a call details page
-                console.log("View details for", emergency.id)
+                router.push(`/call-history?emergency=${emergency.id}`)
               }}
             >
-              Details
+              Call History
             </Button>
             <Button
               variant="default"
               size="sm"
               className="text-xs bg-red-600 hover:bg-red-700"
-              onClick={(e) => {
-                e.stopPropagation()
-                // In a real app, this would dispatch the call
-                console.log("Dispatch for", emergency.id)
-              }}
+              onClick={(e) => handleDispatch(emergency.id, e)}
             >
               Dispatch
             </Button>

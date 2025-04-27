@@ -1,8 +1,9 @@
 "use client"
 
-import { X, LifeBuoy, Phone, Users, AlertTriangle, MessageSquare, Clock, Settings, LogOut } from "lucide-react"
+import { X, LifeBuoy, Phone, Users, Clock, Settings, LogOut, Map } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { usePathname, useRouter } from "next/navigation"
 
 interface DashboardSidebarProps {
   open: boolean
@@ -10,19 +11,27 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
+  const pathname = usePathname()
+  const router = useRouter()
+
   return (
     <div
       className={`fixed inset-0 z-20 transform transition-transform duration-200 lg:transform-none lg:relative lg:inset-auto lg:flex lg:w-64 ${open ? "translate-x-0" : "-translate-x-full"}`}
     >
       <div className="absolute inset-0 bg-gray-600 bg-opacity-75 lg:hidden" onClick={() => setOpen(false)}></div>
 
-      <div className="relative flex h-full flex-col overflow-y-auto border-r bg-white pb-4">
-        <div className="flex items-center justify-between px-4 py-3 border-b">
+      <div className="relative flex h-full flex-col overflow-y-auto border-r bg-midnight-500 pb-4 text-white">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-midnight-400">
           <Link href="/" className="flex items-center">
             <LifeBuoy className="h-6 w-6 text-red-600" />
             <span className="ml-2 text-lg font-semibold">EMS Response</span>
           </Link>
-          <Button variant="ghost" size="icon" className="lg:hidden" onClick={() => setOpen(false)}>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="lg:hidden text-white hover:bg-midnight-400"
+            onClick={() => setOpen(false)}
+          >
             <X className="h-5 w-5" />
             <span className="sr-only">Close sidebar</span>
           </Button>
@@ -31,57 +40,64 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
         <div className="flex-1 px-3 py-4">
           <nav className="space-y-1">
             <Link
-              href="#"
-              className="flex items-center px-3 py-2 text-sm font-medium rounded-md bg-gray-100 text-gray-900"
+              href="/"
+              className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                pathname === "/" ? "bg-midnight-400 text-white" : "text-gray-300 hover:bg-midnight-400 hover:text-white"
+              }`}
             >
-              <Phone className="mr-3 h-5 w-5 text-gray-500" />
+              <Phone className="mr-3 h-5 w-5" />
               <span>Incoming Calls</span>
             </Link>
             <Link
-              href="#"
-              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              href="/emergency-map"
+              className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                pathname === "/emergency-map"
+                  ? "bg-midnight-400 text-white"
+                  : "text-gray-300 hover:bg-midnight-400 hover:text-white"
+              }`}
             >
-              <AlertTriangle className="mr-3 h-5 w-5 text-gray-500" />
-              <span>Active Emergencies</span>
+              <Map className="mr-3 h-5 w-5" />
+              <span>Emergency Map</span>
             </Link>
             <Link
-              href="#"
-              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              href="/responder-teams"
+              className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                pathname === "/responder-teams"
+                  ? "bg-midnight-400 text-white"
+                  : "text-gray-300 hover:bg-midnight-400 hover:text-white"
+              }`}
             >
-              <Users className="mr-3 h-5 w-5 text-gray-500" />
+              <Users className="mr-3 h-5 w-5" />
               <span>Responder Teams</span>
             </Link>
             <Link
-              href="#"
-              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              href="/call-history"
+              className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                pathname === "/call-history"
+                  ? "bg-midnight-400 text-white"
+                  : "text-gray-300 hover:bg-midnight-400 hover:text-white"
+              }`}
             >
-              <MessageSquare className="mr-3 h-5 w-5 text-gray-500" />
-              <span>Communications</span>
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-            >
-              <Clock className="mr-3 h-5 w-5 text-gray-500" />
+              <Clock className="mr-3 h-5 w-5" />
               <span>Call History</span>
             </Link>
           </nav>
         </div>
 
-        <div className="border-t px-3 py-4">
+        <div className="border-t border-midnight-400 px-3 py-4">
           <nav className="space-y-1">
             <Link
               href="#"
-              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-midnight-400 hover:text-white"
             >
-              <Settings className="mr-3 h-5 w-5 text-gray-500" />
+              <Settings className="mr-3 h-5 w-5" />
               <span>Settings</span>
             </Link>
             <Link
-              href="#"
-              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+              href="/login"
+              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-midnight-400 hover:text-white"
             >
-              <LogOut className="mr-3 h-5 w-5 text-gray-500" />
+              <LogOut className="mr-3 h-5 w-5" />
               <span>Sign out</span>
             </Link>
           </nav>

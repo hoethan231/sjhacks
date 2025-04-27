@@ -91,18 +91,6 @@ export function CommunicationPanel({ emergency }: CommunicationPanelProps) {
             <span className="sr-only">Send message</span>
           </Button>
         </div>
-
-        <div className="flex gap-2 mt-2">
-          <Button variant="outline" size="sm" className="text-xs">
-            Send Location
-          </Button>
-          <Button variant="outline" size="sm" className="text-xs">
-            Request Backup
-          </Button>
-          <Button variant="outline" size="sm" className="text-xs">
-            Send Alert
-          </Button>
-        </div>
       </div>
     </div>
   )
