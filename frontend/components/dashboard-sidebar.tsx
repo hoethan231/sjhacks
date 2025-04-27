@@ -114,13 +114,15 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               <BedDouble className="mr-3 h-5 w-5" />
               <span>Hospital Capacity</span>
             </Link>
+
+            
           </nav>
         </div>
 
         {/* ────────── Footer ────────── */}
         <div className="border-t border-midnight-400 dark:border-slate-700 px-3 py-4">
           <nav className="space-y-1">
-            <div className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-midnight-400 dark:hover:bg-slate-700 hover:text-white">
+            <div className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300">
               <ThemeToggle />
             </div>
             <Link
