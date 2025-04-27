@@ -61,13 +61,13 @@ export function EmergencyDashboard() {
     : emergencies[0]
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-background">
       <DashboardSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
 
       <div className="flex flex-col flex-1 overflow-hidden">
         <DashboardHeader setSidebarOpen={setSidebarOpen} />
 
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-6">
+        <main className="flex-1 overflow-y-auto bg-background p-4 md:p-6">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Incoming calls section */}
             <div className="lg:col-span-1">

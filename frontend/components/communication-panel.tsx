@@ -58,10 +58,10 @@ export function CommunicationPanel({ emergency }: CommunicationPanelProps) {
   }
 
   return (
-    <div className="border rounded-lg bg-white overflow-hidden">
-      <div className="p-4 border-b bg-gray-50">
+    <div className="border rounded-lg bg-card overflow-hidden">
+      <div className="p-4 border-b bg-secondary">
         <h2 className="text-lg font-semibold flex items-center">
-          <MessageSquare className="mr-2 h-5 w-5 text-blue-600" />
+          <MessageSquare className="mr-2 h-5 w-5 text-blue-600 dark:text-blue-400" />
           Communication Updates
         </h2>
       </div>
@@ -71,22 +71,26 @@ export function CommunicationPanel({ emergency }: CommunicationPanelProps) {
           <div key={msg.id} className="mb-3">
             <div className="flex items-center justify-between mb-1">
               <span className="font-medium">{msg.sender}</span>
-              <span className="text-xs text-gray-500">{msg.time}</span>
+              <span className="text-xs text-muted-foreground">{msg.time}</span>
             </div>
-            <p className="text-sm bg-gray-50 p-2 rounded-lg">{msg.content}</p>
+            <p className="text-sm bg-secondary p-2 rounded-lg">{msg.content}</p>
           </div>
         ))}
       </div>
 
       <div className="p-4 border-t">
-        <div className="flex items-start gap-2">
+        <div className="relative">
           <Textarea
             placeholder="Send an update to responders..."
-            className="min-h-[80px] flex-1"
+            className="min-h-[80px] pr-12"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
           />
-          <Button className="bg-blue-600 hover:bg-blue-700" size="icon" onClick={handleSendMessage}>
+          <Button
+            className="absolute bottom-2 right-2 bg-blue-600 hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800"
+            size="icon"
+            onClick={handleSendMessage}
+          >
             <Send className="h-4 w-4" />
             <span className="sr-only">Send message</span>
           </Button>

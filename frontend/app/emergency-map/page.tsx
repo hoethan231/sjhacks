@@ -1,206 +1,111 @@
 "use client"
 
-import { useState } from "react"
-import { DashboardHeader } from "@/components/dashboard-header"
-import { DashboardSidebar } from "@/components/dashboard-sidebar"
-import { emergencies } from "@/components/emergency-dashboard"
-import { Badge } from "@/components/ui/badge"
+import { useMemo } from "react";
+import dynamic from "next/dynamic";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { DashboardSidebar } from "@/components/dashboard-sidebar";
+import { emergencies } from "@/components/emergency-dashboard";
 
 interface Responder {
-  id: string
-  name: string
-  type: string
-  status: "active" | "inactive"
-  assignedTo?: string
-  coordinates: { lat: number; lng: number }
+  id: string;
+  name: string;
+  type: string;
+  status: "active" | "inactive";
+  coordinates: { lat: number; lng: number };
+}
+
+// Mock responder list – replace with your own data source or API call
+const responders: Responder[] = [
+  { id: "E5", name: "Engine 5", type: "Fire", status: "inactive", coordinates: { lat: 37.3382, lng: -121.8847 } },
+  { id: "A12", name: "Ambulance 12", type: "Medical", status: "inactive", coordinates: { lat: 37.3421, lng: -121.8942 } },
+  { id: "B2", name: "Battalion 2", type: "Fire", status: "inactive", coordinates: { lat: 37.3318, lng: -121.881 } },
+];
+
+// Dynamically import react‑leaflet on the client to avoid SSR errors
+const MapContainer = dynamic(() => import("react-leaflet").then(mod => mod.MapContainer), { ssr: false });
+const TileLayer    = dynamic(() => import("react-leaflet").then(mod => mod.TileLayer),    { ssr: false });
+const Marker       = dynamic(() => import("react-leaflet").then(mod => mod.Marker),       { ssr: false });
+const Popup        = dynamic(() => import("react-leaflet").then(mod => mod.Popup),        { ssr: false });
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+// Fix default icon paths (Leaflet tries to grab from /, not /_next)
+delete (L.Icon.Default as any).prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
+  iconUrl:       "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
+  shadowUrl:     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
+});
+
+function responderDivIcon(label: string) {
+  return L.divIcon({
+    className: "responder-icon",
+    html: label,
+    iconSize: [30, 30],
+    iconAnchor: [15, 30],
+  });
 }
 
 export default function EmergencyMapPage() {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  // Only inactive responders
+  const inactiveResponders = responders.filter(r => r.status === "inactive");
 
-  // Sample responders data with coordinates
-  const responders: Responder[] = [
-    {
-      id: "r9",
-      name: "Engine 5",
-      type: "Fire",
-      status: "inactive",
-      coordinates: { lat: 37.338, lng: -121.886 },
-    },
-    {
-      id: "r10",
-      name: "Ambulance 9",
-      type: "Medical",
-      status: "inactive",
-      coordinates: { lat: 37.332, lng: -121.901 },
-    },
-    {
-      id: "r11",
-      name: "Police Unit 7",
-      type: "Police",
-      status: "inactive",
-      coordinates: { lat: 37.342, lng: -121.895 },
-    },
-    {
-      id: "r12",
-      name: "Ladder 3",
-      type: "Fire",
-      status: "inactive",
-      coordinates: { lat: 37.325, lng: -121.878 },
-    },
-  ]
-
-  // Function to get responder icon code
-  const getResponderIcon = (name: string) => {
-    const parts = name.split(" ")
-    if (parts.length >= 2) {
-      return parts[0].charAt(0) + parts[1] // E.g., "Engine 5" becomes "E5"
-    }
-    return name.substring(0, 2)
-  }
-
-  // Function to get emergency icon based on type
-  const getEmergencyIcon = (type: string) => {
-    switch (type.toLowerCase()) {
-      case "fire":
-        return "🔥"
-      case "medical":
-        return "🚑"
-      case "traffic accident":
-        return "🚗"
-      default:
-        return "⚠️"
-    }
-  }
+  // Memoize the icon to avoid recreation
+  const responderIcons = useMemo(() => {
+    const map: Record<string, L.DivIcon> = {};
+    inactiveResponders.forEach(r => {
+      map[r.id] = responderDivIcon(r.id);
+    });
+    return map;
+  }, [inactiveResponders]);
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <DashboardSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
-
-      <div className="flex flex-col flex-1 overflow-hidden">
-        <DashboardHeader setSidebarOpen={setSidebarOpen} />
-
-        <main className="flex-1 overflow-y-auto bg-gray-50 p-4 md:p-6">
-          <h1 className="text-2xl font-bold mb-6">Emergency Map - San Jose</h1>
-
-          <div className="border rounded-lg bg-white p-4 mb-6">
-            <div className="flex flex-wrap gap-4 mb-4">
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full bg-red-500 flex items-center justify-center text-white text-xs mr-2">
-                  🔥
-                </div>
-                <span>Fire Emergency</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full bg-blue-500 flex items-center justify-center text-white text-xs mr-2">
-                  🚑
-                </div>
-                <span>Medical Emergency</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full bg-yellow-500 flex items-center justify-center text-white text-xs mr-2">
-                  🚗
-                </div>
-                <span>Traffic Accident</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-6 h-6 rounded-full bg-gray-500 flex items-center justify-center text-white text-xs mr-2">
-                  E5
-                </div>
-                <span>Inactive Responder</span>
-              </div>
-            </div>
+    <div className="flex min-h-screen w-full">
+      <DashboardSidebar />
+      <div className="flex flex-col flex-1">
+        <DashboardHeader title="Emergency Map" />
+        <div className="flex-1 relative">
+          {/* Map fills the rest of the viewport */}
+          <div className="absolute inset-0">
+            <MapContainer center={[37.3382, -121.8863]} zoom={13} style={{ height: "100%", width: "100%" }}>
+              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="© OpenStreetMap contributors" />
+              {emergencies.map(e => (
+                <Marker key={e.id} position={[e.coordinates.lat, e.coordinates.lng]}>
+                  <Popup>
+                    <strong>{e.type}</strong>
+                    <br />
+                    {e.description}
+                  </Popup>
+                </Marker>
+              ))}
+              {inactiveResponders.map(r => (
+                <Marker key={r.id} position={[r.coordinates.lat, r.coordinates.lng]} icon={responderIcons[r.id]}>
+                  <Popup>
+                    <strong>{r.name}</strong>
+                    <br />
+                    Status: {r.status}
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
           </div>
-
-          <div className="relative border rounded-lg overflow-hidden" style={{ height: "600px" }}>
-            {/* Map of San Jose */}
-            <div className="absolute inset-0 bg-blue-50">
-              <div className="relative w-full h-full">
-                {/* This would be replaced with an actual map library in a real application */}
-                <img
-                  src="/placeholder.svg?height=600&width=1200"
-                  alt="Map of San Jose"
-                  className="w-full h-full object-cover opacity-50"
-                />
-
-                {/* Emergency markers */}
-                {emergencies.map((emergency) => (
-                  <div
-                    key={emergency.id}
-                    className="absolute"
-                    style={{
-                      left: `${(emergency.coordinates.lng + 122) * 200}px`,
-                      top: `${(38 - emergency.coordinates.lat) * 200}px`,
-                    }}
-                  >
-                    <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm -ml-4 -mt-4 ${
-                        emergency.status === "Critical"
-                          ? "bg-red-500"
-                          : emergency.status === "Urgent"
-                            ? "bg-orange-500"
-                            : "bg-blue-500"
-                      }`}
-                    >
-                      {getEmergencyIcon(emergency.type)}
-                    </div>
-                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-white px-2 py-1 rounded text-xs shadow">
-                      {emergency.type}
-                    </div>
-                  </div>
-                ))}
-
-                {/* Responder markers - only show inactive responders */}
-                {responders
-                  .filter((responder) => responder.status === "inactive")
-                  .map((responder) => (
-                    <div
-                      key={responder.id}
-                      className="absolute"
-                      style={{
-                        left: `${(responder.coordinates.lng + 122) * 200}px`,
-                        top: `${(38 - responder.coordinates.lat) * 200}px`,
-                      }}
-                    >
-                      <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center text-white text-xs -ml-4 -mt-4">
-                        {getResponderIcon(responder.name)}
-                      </div>
-                      <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 bg-white px-2 py-1 rounded text-xs shadow">
-                        {responder.name}
-                      </div>
-                    </div>
-                  ))}
-              </div>
-            </div>
-
-            {/* Map overlay with emergency information */}
-            <div className="absolute top-4 right-4 w-64 bg-white rounded-lg shadow-lg p-4">
-              <h3 className="font-semibold mb-2">Active Emergencies</h3>
-              <div className="space-y-2">
-                {emergencies.map((emergency) => (
-                  <div key={emergency.id} className="text-sm border-b pb-2">
-                    <div className="flex justify-between items-center">
-                      <span className="font-medium">{emergency.type}</span>
-                      <Badge
-                        className={`${
-                          emergency.status === "Critical"
-                            ? "bg-red-500"
-                            : emergency.status === "Urgent"
-                              ? "bg-orange-500"
-                              : "bg-blue-500"
-                        }`}
-                      >
-                        {emergency.status}
-                      </Badge>
-                    </div>
-                    <p className="text-xs text-gray-600">{emergency.location}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </main>
+        </div>
       </div>
+      <style jsx global>{`
+        .responder-icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background: #1e90ff;
+          color: #fff;
+          font: 700 14px/1 "Segoe UI", sans-serif;
+          border: 2px solid #fff;
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+        }
+      `}</style>
     </div>
-  )
+  );
 }

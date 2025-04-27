@@ -1,9 +1,10 @@
 "use client"
 
-import { X, LifeBuoy, Phone, Users, Clock, Settings, LogOut, Map } from "lucide-react"
+import { X, LifeBuoy, Phone, Users, Clock, LogOut, Map } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface DashboardSidebarProps {
   open: boolean
@@ -20,8 +21,8 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
     >
       <div className="absolute inset-0 bg-gray-600 bg-opacity-75 lg:hidden" onClick={() => setOpen(false)}></div>
 
-      <div className="relative flex h-full flex-col overflow-y-auto border-r bg-midnight-500 pb-4 text-white">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-midnight-400">
+      <div className="relative flex h-full flex-col overflow-y-auto border-r bg-midnight-500 dark:bg-slate-800 pb-4 text-white">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-midnight-400 dark:border-slate-700">
           <Link href="/" className="flex items-center">
             <LifeBuoy className="h-6 w-6 text-red-600" />
             <span className="ml-2 text-lg font-semibold">EMS Response</span>
@@ -29,7 +30,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden text-white hover:bg-midnight-400"
+            className="lg:hidden text-white hover:bg-midnight-400 dark:hover:bg-slate-700"
             onClick={() => setOpen(false)}
           >
             <X className="h-5 w-5" />
@@ -42,7 +43,9 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
             <Link
               href="/"
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
-                pathname === "/" ? "bg-midnight-400 text-white" : "text-gray-300 hover:bg-midnight-400 hover:text-white"
+                pathname === "/"
+                  ? "bg-midnight-400 dark:bg-slate-700 text-white"
+                  : "text-gray-300 hover:bg-midnight-400 dark:hover:bg-slate-700 hover:text-white"
               }`}
             >
               <Phone className="mr-3 h-5 w-5" />
@@ -52,8 +55,8 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               href="/emergency-map"
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                 pathname === "/emergency-map"
-                  ? "bg-midnight-400 text-white"
-                  : "text-gray-300 hover:bg-midnight-400 hover:text-white"
+                  ? "bg-midnight-400 dark:bg-slate-700 text-white"
+                  : "text-gray-300 hover:bg-midnight-400 dark:hover:bg-slate-700 hover:text-white"
               }`}
             >
               <Map className="mr-3 h-5 w-5" />
@@ -63,8 +66,8 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               href="/responder-teams"
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                 pathname === "/responder-teams"
-                  ? "bg-midnight-400 text-white"
-                  : "text-gray-300 hover:bg-midnight-400 hover:text-white"
+                  ? "bg-midnight-400 dark:bg-slate-700 text-white"
+                  : "text-gray-300 hover:bg-midnight-400 dark:hover:bg-slate-700 hover:text-white"
               }`}
             >
               <Users className="mr-3 h-5 w-5" />
@@ -74,8 +77,8 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               href="/call-history"
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
                 pathname === "/call-history"
-                  ? "bg-midnight-400 text-white"
-                  : "text-gray-300 hover:bg-midnight-400 hover:text-white"
+                  ? "bg-midnight-400 dark:bg-slate-700 text-white"
+                  : "text-gray-300 hover:bg-midnight-400 dark:hover:bg-slate-700 hover:text-white"
               }`}
             >
               <Clock className="mr-3 h-5 w-5" />
@@ -84,18 +87,15 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
           </nav>
         </div>
 
-        <div className="border-t border-midnight-400 px-3 py-4">
+        <div className="border-t border-midnight-400 dark:border-slate-700 px-3 py-4">
           <nav className="space-y-1">
-            <Link
-              href="#"
-              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-midnight-400 hover:text-white"
-            >
-              <Settings className="mr-3 h-5 w-5" />
-              <span>Settings</span>
-            </Link>
+            <div className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-midnight-400 dark:hover:bg-slate-700 hover:text-white">
+              <ThemeToggle />
+              
+            </div>
             <Link
               href="/login"
-              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-midnight-400 hover:text-white"
+              className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-midnight-400 dark:hover:bg-slate-700 hover:text-white"
             >
               <LogOut className="mr-3 h-5 w-5" />
               <span>Sign out</span>

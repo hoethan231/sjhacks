@@ -24,7 +24,7 @@ export function DashboardHeader({ setSidebarOpen }: DashboardHeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-white px-4 md:px-6">
+    <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <Button variant="ghost" size="icon" className="md:hidden" onClick={() => setSidebarOpen(true)}>
         <Menu className="h-5 w-5" />
         <span className="sr-only">Toggle sidebar</span>
@@ -63,7 +63,7 @@ export function DashboardHeader({ setSidebarOpen }: DashboardHeaderProps) {
         </DropdownMenu>
 
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-full bg-secondary flex items-center justify-center">
             <span className="text-sm font-medium">ER</span>
           </div>
           <span className="text-sm font-medium md:block hidden">Dispatcher</span>

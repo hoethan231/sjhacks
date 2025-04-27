@@ -41,8 +41,10 @@ export function IncomingCallsList({ emergencies, selectedEmergency, setSelectedE
         <div
           key={emergency.id}
           className={`border rounded-lg p-4 cursor-pointer transition-colors ${
-            selectedEmergency === emergency.id ? "border-red-500 bg-red-50" : "hover:bg-gray-50"
-          }`}
+            selectedEmergency === emergency.id
+              ? "border-red-500 bg-red-50 dark:bg-red-900/20"
+              : "hover:bg-gray-50 dark:hover:bg-gray-800/50"
+          } bg-card`}
           onClick={() => setSelectedEmergency(emergency.id)}
         >
           <div className="flex justify-between items-start mb-2">
@@ -50,7 +52,7 @@ export function IncomingCallsList({ emergencies, selectedEmergency, setSelectedE
               {emergency.status === "Critical" ? (
                 <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
               ) : (
-                <Phone className="h-5 w-5 text-blue-600 mr-2" />
+                <Phone className="h-5 w-5 text-blue-600 dark:text-blue-400 mr-2" />
               )}
               <h3 className="font-medium">{emergency.type}</h3>
             </div>
@@ -61,13 +63,13 @@ export function IncomingCallsList({ emergencies, selectedEmergency, setSelectedE
                   : emergency.status === "Urgent"
                     ? "bg-orange-500"
                     : "bg-blue-500"
-              }`}
+              } text-white dark:text-white`}
             >
               {emergency.status}
             </Badge>
           </div>
 
-          <div className="text-sm text-gray-600 mb-2">
+          <div className="text-sm text-muted-foreground mb-2">
             <p className="truncate">{emergency.location}</p>
             <p className="mt-1">{emergency.time}</p>
           </div>
@@ -87,7 +89,7 @@ export function IncomingCallsList({ emergencies, selectedEmergency, setSelectedE
             <Button
               variant="default"
               size="sm"
-              className="text-xs bg-red-600 hover:bg-red-700"
+              className="text-xs bg-red-600 hover:bg-red-700 text-white dark:text-white"
               onClick={(e) => handleDispatch(emergency.id, e)}
             >
               Dispatch
