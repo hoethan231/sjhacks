@@ -13,9 +13,6 @@ export default function Page() {
         apiKey: String(process.env.NEXT_PUBLIC_HUME_API_KEY),
         secretKey: String(process.env.NEXT_PUBLIC_HUME_SECRET),
       });
-      console.log(process.env.HUME_API_KEY);
-      console.log(process.env.HUME_SECRET);
-      console.log(token);
       return token;
     } catch (error) {
       console.error('Error getting access token:', error);
@@ -27,7 +24,6 @@ export default function Page() {
         getAccessToken().then((token) => {
           if (token) {
             setAccessToken(token);
-            console.log('Access token:', token);
           }
         });
       } catch (error) {

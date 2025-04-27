@@ -44,12 +44,12 @@ def config_client() -> None:
                 text="",
             ),
         ),
-        webhooks=[
-            PostedWebhookSpec(
-                url="https://09e0-50-217-174-18.ngrok-free.app/hume-webhook",
-                events=["chat_started", "chat_ended"],
-            )
-        ],
+        # webhooks=[
+        #     PostedWebhookSpec(
+        #         url="https://09e0-50-217-174-18.ngrok-free.app/hume-webhook",
+        #         events=["chat_started", "chat_ended"],
+        #     )
+        # ],
     )
 
     print("Created config!")
