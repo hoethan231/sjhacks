@@ -4,6 +4,7 @@
 Run the following with conda, to create env: 
 ```
 conda env create -f environment.yml
+pip install -r requirements.txt
 ```
 
 ### Mongo cred setup. 
