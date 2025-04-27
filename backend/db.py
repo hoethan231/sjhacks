@@ -6,4 +6,4 @@ import os
 load_dotenv()
 client = MongoClient(os.getenv("MONGO_URI"))
 db = client.get_database('database')
-emergencies_collection = pymongo.collection.Collection(db, 'emergencies')
+emergencies_collection = db["emergencies"]
