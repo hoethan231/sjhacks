@@ -25,7 +25,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
         <div className="flex items-center justify-between px-4 py-3 border-b border-midnight-400 dark:border-slate-700">
           <Link href="/" className="flex items-center">
             <LifeBuoy className="h-6 w-6 text-red-600" />
-            <span className="ml-2 text-lg font-semibold">EMS Response</span>
+            <span className="ml-2 text-lg font-semibold">RERS</span>
           </Link>
           <Button
             variant="ghost"
