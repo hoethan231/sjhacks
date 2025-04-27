@@ -32,7 +32,7 @@ export function ThemeToggle() {
     <Button
       variant="ghost"
       size="sm"
-      className="flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-slate-700"
+      className="w-full flex items-center gap-2 px-3 py-2 hover:bg-gray-100 dark:hover:bg-slate-700"
       onClick={() => setTheme(nextTheme)}
     >
       <Icon className="h-5 w-5" />
