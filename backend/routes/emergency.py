@@ -5,19 +5,19 @@ from bson import ObjectId
 
 router = APIRouter()
 
-@router.post("/new", response_model=EmergencyOut)
-async def create_emergency(emergency: EmergencyCreate):
+@router.post("/new", response_model)
+async def create_emergency(emergency):
     record = emergency.dict()
     result = await emergencies_collection.insert_one(record)
     return {**record, "id": str(result.inserted_id)}
 
-@router.get("/list", response_model=List[EmergencyOut])
+@router.get("/list", response_model)
 async def list_emergencies():
     cursor = emergencies_collection.find()
     emergencies = await cursor.to_list(length=100)
     return [{**e, "id": str(e["_id"])} for e in emergencies]
 
-@router.get("/{id}", response_model=EmergencyOut)
+@router.get("/{id}", response_model)
 async def get_emergency(id: str):
     emergency = await emergencies_collection.find_one({"_id": ObjectId(id)})
     if not emergency:
