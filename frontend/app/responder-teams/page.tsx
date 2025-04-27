@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { useSearchParams } from "next/navigation"
 import { Users, CheckCircle, AlertTriangle } from "lucide-react"
+import Link from "next/link"
 import { DashboardHeader } from "@/components/dashboard-header"
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
 import { Button } from "@/components/ui/button"
@@ -152,6 +153,20 @@ export default function ResponderTeamsPage() {
               </div>
             </div>
           </div>
+            {emergencyId && responders.some(r => r.assignedTo === emergencyId) && (
+
+              <div className="mt-6">
+
+                <Link href={`/hospital-capacity?emergency=${emergencyId}&needed=${selectedEmergency?.injured || 0}`}>
+
+                  <Button>View Hospital Capacity</Button>
+
+                </Link>
+
+              </div>
+
+            )}
+
         </main>
       </div>
     </div>

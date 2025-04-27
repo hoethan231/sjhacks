@@ -1,6 +1,6 @@
 "use client"
 
-import { X, Phone, Users, Clock, LogOut, Map } from "lucide-react"
+import { X, Phone, Users, Clock, LogOut, Map, BedDouble } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
@@ -18,14 +18,26 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-20 transform transition-transform duration-200 lg:transform-none lg:relative lg:inset-auto lg:flex lg:w-64 ${open ? "translate-x-0" : "-translate-x-full"}`}
+      className={`fixed inset-0 z-20 transform transition-transform duration-200 lg:transform-none lg:relative lg:inset-auto lg:flex lg:w-64 ${
+        open ? "translate-x-0" : "-translate-x-full"
+      }`}
     >
-      <div className="absolute inset-0 bg-gray-600 bg-opacity-75 lg:hidden" onClick={() => setOpen(false)}></div>
+      <div
+        className="absolute inset-0 bg-gray-600 bg-opacity-75 lg:hidden"
+        onClick={() => setOpen(false)}
+      ></div>
 
       <div className="relative flex h-full flex-col overflow-y-auto border-r bg-midnight-500 dark:bg-slate-800 pb-4 text-white">
+        {/* ────────── Header ────────── */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-midnight-400 dark:border-slate-700">
           <Link href="/" className="flex items-center">
-            <Image src="/seal.png" alt="RERS Seal" width={24} height={24} className="h-6 w-6" />
+            <Image
+              src="/seal.png"
+              alt="RERS Seal"
+              width={24}
+              height={24}
+              className="h-6 w-6"
+            />
             <span className="ml-2 text-lg font-semibold">RERS</span>
           </Link>
           <Button
@@ -39,6 +51,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
           </Button>
         </div>
 
+        {/* ────────── Main nav ────────── */}
         <div className="flex-1 px-3 py-4">
           <nav className="space-y-1">
             <Link
@@ -52,6 +65,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               <Phone className="mr-3 h-5 w-5" />
               <span>Current Emergencies</span>
             </Link>
+
             <Link
               href="/emergency-map"
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
@@ -63,6 +77,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               <Map className="mr-3 h-5 w-5" />
               <span>Emergency Map</span>
             </Link>
+
             <Link
               href="/responder-teams"
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
@@ -74,6 +89,7 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               <Users className="mr-3 h-5 w-5" />
               <span>Responder Teams</span>
             </Link>
+
             <Link
               href="/call-history"
               className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
@@ -85,14 +101,27 @@ export function DashboardSidebar({ open, setOpen }: DashboardSidebarProps) {
               <Clock className="mr-3 h-5 w-5" />
               <span>Call History</span>
             </Link>
+
+            {/* ────────── Hospital Capacity ────────── */}
+            <Link
+              href="/hospital-capacity"
+              className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                pathname.startsWith("/hospital-capacity")
+                  ? "bg-midnight-400 dark:bg-slate-700 text-white"
+                  : "text-gray-300 hover:bg-midnight-400 dark:hover:bg-slate-700 hover:text-white"
+              }`}
+            >
+              <BedDouble className="mr-3 h-5 w-5" />
+              <span>Hospital Capacity</span>
+            </Link>
           </nav>
         </div>
 
+        {/* ────────── Footer ────────── */}
         <div className="border-t border-midnight-400 dark:border-slate-700 px-3 py-4">
           <nav className="space-y-1">
             <div className="flex items-center px-3 py-2 text-sm font-medium rounded-md text-gray-300 hover:bg-midnight-400 dark:hover:bg-slate-700 hover:text-white">
               <ThemeToggle />
-              
             </div>
             <Link
               href="/login"

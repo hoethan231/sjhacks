@@ -21,6 +21,10 @@ export const emergencies = [
     description: "Kitchen fire spreading to living room. Three occupants evacuated, one possibly still inside.",
     responders: ["Engine 12", "Ladder 5", "Ambulance 3"],
     recommendedResponders: 5,
+    injured: 2,
+    injured: 5,
+    injured: 8,
+    injured: 3,
     coordinates: { lat: 37.335, lng: -121.893 },
   },
   {
@@ -34,6 +38,7 @@ export const emergencies = [
     description: "Elderly male, 78, experiencing chest pain and difficulty breathing.",
     responders: ["Ambulance 7", "Paramedic 2"],
     recommendedResponders: 3,
+    injured: 2,
     coordinates: { lat: 37.329, lng: -121.885 },
   },
   {
@@ -47,6 +52,7 @@ export const emergencies = [
     description: "Multi-vehicle collision, at least 3 vehicles involved. Possible injuries reported.",
     responders: ["Engine 8", "Ambulance 4", "Police Unit 15"],
     recommendedResponders: 6,
+    injured: 2,
     coordinates: { lat: 37.345, lng: -121.915 },
   },
 ]

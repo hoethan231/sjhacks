@@ -2,6 +2,16 @@ import { MapPin, Users, Clock, AlertTriangle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 
+
+const responderRequirements: Record<string, { Fire?: number; Medical?: number; Police?: number; Clinician?: number; Outreach?: number; CityServices?: number }> = {
+  Fire: { Fire: 2, Medical: 1, Police: 1 },
+  Medical: { Medical: 2, Police: 1 },
+  Police: { Police: 2 },
+  Collision: { Fire: 1, Medical: 2, Police: 1 },
+  Hazard: { Fire: 3, Police: 1 },
+  Other: { Police:1 }
+};
+
 interface Emergency {
   id: string
   type: string

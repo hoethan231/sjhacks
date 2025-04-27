@@ -1,111 +1,193 @@
 "use client"
 
-import { useMemo } from "react";
-import dynamic from "next/dynamic";
-import { DashboardHeader } from "@/components/dashboard-header";
-import { DashboardSidebar } from "@/components/dashboard-sidebar";
-import { emergencies } from "@/components/emergency-dashboard";
+import { useState, useEffect, useRef } from "react"
+import mapboxgl from "@/app/utils/mapboxgl-worker";
+
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css"
+import {
+  GeolocateControl,
+  FullscreenControl,
+  NavigationControl,
+  ScaleControl
+} from "mapbox-gl"
+import { DashboardHeader } from "@/components/dashboard-header"
+import { DashboardSidebar } from "@/components/dashboard-sidebar"
+import { emergencies } from "@/components/emergency-dashboard"
+import { hospitals } from "@/components/hospital-data"
 
 interface Responder {
-  id: string;
-  name: string;
-  type: string;
-  status: "active" | "inactive";
-  coordinates: { lat: number; lng: number };
+  id: string
+  name: string
+  type: string
+  status: "active" | "inactive"
+  coordinates: { lat: number; lng: number }
 }
 
-// Mock responder list – replace with your own data source or API call
 const responders: Responder[] = [
   { id: "E5", name: "Engine 5", type: "Fire", status: "inactive", coordinates: { lat: 37.3382, lng: -121.8847 } },
   { id: "A12", name: "Ambulance 12", type: "Medical", status: "inactive", coordinates: { lat: 37.3421, lng: -121.8942 } },
   { id: "B2", name: "Battalion 2", type: "Fire", status: "inactive", coordinates: { lat: 37.3318, lng: -121.881 } },
-];
+]
 
-// Dynamically import react‑leaflet on the client to avoid SSR errors
-const MapContainer = dynamic(() => import("react-leaflet").then(mod => mod.MapContainer), { ssr: false });
-const TileLayer    = dynamic(() => import("react-leaflet").then(mod => mod.TileLayer),    { ssr: false });
-const Marker       = dynamic(() => import("react-leaflet").then(mod => mod.Marker),       { ssr: false });
-const Popup        = dynamic(() => import("react-leaflet").then(mod => mod.Popup),        { ssr: false });
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-
-// Fix default icon paths (Leaflet tries to grab from /, not /_next)
-delete (L.Icon.Default as any).prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
-  iconUrl:       "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  shadowUrl:     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
-});
-
-function responderDivIcon(label: string) {
-  return L.divIcon({
-    className: "responder-icon",
-    html: label,
-    iconSize: [30, 30],
-    iconAnchor: [15, 30],
-  });
-}
+// Token via env for security
+mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN || ""
 
 export default function EmergencyMapPage() {
-  // Only inactive responders
-  const inactiveResponders = responders.filter(r => r.status === "inactive");
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const mapContainer = useRef<HTMLDivElement>(null)
+  const map = useRef<mapboxgl.Map | null>(null)
 
-  // Memoize the icon to avoid recreation
-  const responderIcons = useMemo(() => {
-    const map: Record<string, L.DivIcon> = {};
-    inactiveResponders.forEach(r => {
-      map[r.id] = responderDivIcon(r.id);
-    });
-    return map;
-  }, [inactiveResponders]);
+  useEffect(() => {
+    if (map.current || !mapContainer.current) return
+
+    /* ──────────── map init ──────────── */
+    map.current = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "mapbox://styles/mapbox/streets-v12",
+      center: [-121.8863, 37.3382],
+      zoom: 11
+    })
+
+    map.current.addControl(new NavigationControl(), "top-left")
+    map.current.addControl(new FullscreenControl(), "top-left")
+    map.current.addControl(
+      new GeolocateControl({
+        positionOptions: { enableHighAccuracy: true },
+        trackUserLocation: true
+      }),
+      "top-left"
+    )
+    map.current.addControl(new ScaleControl({ maxWidth: 100, unit: "imperial" }))
+
+    /* ──────────── helpers ──────────── */
+    const emergencyIcon = (type: string) => {
+      switch (type) {
+        case "Fire": return "🔥"
+        case "Medical": return "🚑"
+        case "Police": return "🚓"
+        case "Collision": return "💥"
+        default: return "⚠️"
+      }
+    }
+
+    const makePopup = (html: string) =>
+      new mapboxgl.Popup({ 
+        offset: 15, 
+        closeButton: false,
+        className: 'mapboxgl-popup-custom'
+      }).setHTML(`
+        <div style="
+          color: black;
+          font-family: system-ui, -apple-system, sans-serif;
+          padding: 8px;
+          max-width: 250px;
+        ">
+          ${html}
+        </div>
+      `)
+
+    /* ─── emergency markers w/ popups ─── */
+    emergencies.forEach(em => {
+      const el = document.createElement("div")
+      el.className = "map-marker"
+      el.textContent = emergencyIcon(em.type)
+
+      const popup = makePopup(`
+        <div style="font-weight: 600; margin-bottom: 4px;">${em.type}</div>
+        <div style="margin-bottom: 4px;">${em.location}</div>
+        ${em.description ? `<div style="font-size: 0.9em; color: #666;">${em.description}</div>` : ''}
+      `)
+
+      new mapboxgl.Marker(el)
+        .setLngLat([em.coordinates.lng, em.coordinates.lat])
+        .setPopup(popup)
+        .addTo(map.current!)
+
+      el.addEventListener("mouseenter", () => popup.addTo(map.current!))
+      el.addEventListener("mouseleave", () => popup.remove())
+    })
+
+    /* ─── responder markers w/ popups ─── */
+    responders.forEach(r => {
+      const el = document.createElement("div")
+      el.className = "map-marker responder"
+      el.textContent = "👤"
+
+      const popup = makePopup(`
+        <div style="font-weight: 600; margin-bottom: 4px;">${r.name}</div>
+        <div style="margin-bottom: 2px;">Type: ${r.type}</div>
+        <div style="color: ${r.status === 'active' ? '#22c55e' : '#ef4444'}">Status: ${r.status}</div>
+      `)
+
+      new mapboxgl.Marker(el)
+        .setLngLat([r.coordinates.lng, r.coordinates.lat])
+        .setPopup(popup)
+        .addTo(map.current!)
+
+      el.addEventListener("mouseenter", () => popup.addTo(map.current!))
+      el.addEventListener("mouseleave", () => popup.remove())
+    })
+
+    /* ─── hospital markers w/ popups ─── */
+    hospitals.forEach(h => {
+      const el = document.createElement("div")
+      el.className = "map-marker hospital"
+      el.textContent = "➕"
+
+      const popup = makePopup(`
+        <div style="font-weight: 600; margin-bottom: 4px;">${h.name}</div>
+        <div style="margin-bottom: 4px;">${h.address}</div>
+        <div style="color: ${h.available > 0 ? '#22c55e' : '#ef4444'}">
+          Available beds: ${h.available}/${h.capacity}
+        </div>
+      `)
+
+      new mapboxgl.Marker(el)
+        .setLngLat([h.coordinates.lng, h.coordinates.lat])
+        .setPopup(popup)
+        .addTo(map.current!)
+
+      el.addEventListener("mouseenter", () => popup.addTo(map.current!))
+      el.addEventListener("mouseleave", () => popup.remove())
+    })
+  }, [])
 
   return (
-    <div className="flex min-h-screen w-full">
-      <DashboardSidebar />
-      <div className="flex flex-col flex-1">
-        <DashboardHeader title="Emergency Map" />
-        <div className="flex-1 relative">
-          {/* Map fills the rest of the viewport */}
-          <div className="absolute inset-0">
-            <MapContainer center={[37.3382, -121.8863]} zoom={13} style={{ height: "100%", width: "100%" }}>
-              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution="© OpenStreetMap contributors" />
-              {emergencies.map(e => (
-                <Marker key={e.id} position={[e.coordinates.lat, e.coordinates.lng]}>
-                  <Popup>
-                    <strong>{e.type}</strong>
-                    <br />
-                    {e.description}
-                  </Popup>
-                </Marker>
-              ))}
-              {inactiveResponders.map(r => (
-                <Marker key={r.id} position={[r.coordinates.lat, r.coordinates.lng]} icon={responderIcons[r.id]}>
-                  <Popup>
-                    <strong>{r.name}</strong>
-                    <br />
-                    Status: {r.status}
-                  </Popup>
-                </Marker>
-              ))}
-            </MapContainer>
-          </div>
-        </div>
+    <div className="flex h-screen overflow-hidden">
+      <DashboardSidebar open={sidebarOpen} setOpen={setSidebarOpen} />
+
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <DashboardHeader setSidebarOpen={setSidebarOpen} />
+
+        <main className="flex-1 relative">
+          <div ref={mapContainer} className="h-full w-full" />
+        </main>
       </div>
+
       <style jsx global>{`
-        .responder-icon {
+        .map-marker {
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 30px;
-          height: 30px;
+          width: 28px;
+          height: 28px;
+          font-size: 18px;
           border-radius: 50%;
-          background: #1e90ff;
+          background: #ffffffcc;
+          backdrop-filter: blur(4px);
+          border: 1px solid #333;
+          box-shadow: 0 0 4px rgba(0, 0, 0, 0.25);
+          cursor: pointer;
+        }
+        .map-marker.responder {
+          background: #2563eb;
           color: #fff;
-          font: 700 14px/1 "Segoe UI", sans-serif;
-          border: 2px solid #fff;
-          box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+        }
+        .map-marker.hospital {
+          background: #e11d48;
+          color: #fff;
         }
       `}</style>
     </div>
-  );
+  )
 }
